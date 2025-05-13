@@ -7,10 +7,26 @@ import { Marker } from 'react-leaflet'
 import './App.css'
 
 import { getFeatures } from "./read-json"
-import type { LatLngExpression } from 'leaflet'
+import { LatLng, type LatLngExpression } from 'leaflet'
+import { useEffect, useState } from 'react'
+
 
 function App() {
-  const markers = getFeatures().libraries.map((x: LatLngExpression) => {
+  const tempArray: LatLng[] = [];
+  const [features, setFeatures] = useState({hospitals: tempArray, libraries: tempArray});
+  
+  useEffect(() => {
+    getFeatures().then(features => setFeatures(features));
+  }, []);
+
+  const hospitalMarkers = features.hospitals.map((x: LatLngExpression) => {
+    return(
+      <>
+        <Marker position={x}></Marker>
+      </>
+    );
+  });
+  const libraryMarkers = features.libraries.map((x: LatLngExpression) => {
     return(
       <>
         <Marker position={x}></Marker>
@@ -20,12 +36,13 @@ function App() {
 
   return (
   <>
-    <MapContainer center={[53.3786, -1.4717]} zoom={13} scrollWheelZoom={false} id="map" >
+    <MapContainer center={[53.3786, -1.4717]} zoom={13} scrollWheelZoom={false} id="map">
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {markers}
+      {libraryMarkers}
+      {hospitalMarkers}
     </MapContainer>
   </>
   )

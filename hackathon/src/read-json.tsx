@@ -49,10 +49,17 @@ export async function getFeatures() {
     }
 }
 
-function flattenOSMData(data: { type?: string; bounds: { maxlat: number; minlat: number; maxlon: number; minlon: number; }; lat: number; lon: number; }[]){
+type Feature = {
+    type?: string;
+    bounds: {maxlat: number, minlat: number, maxlon: number, minlon: number}; 
+    lat: number; 
+    lon: number; 
+}
+
+function flattenOSMData(data: Feature[]){
     const list: LatLng[] = [];
     
-    data.forEach((feature: { type?: string; bounds: {maxlat: number, minlat: number, maxlon: number, minlon: number}; lat: number; lon: number; }) => {
+    data.forEach((feature: Feature) => {
         if(feature.type == 'way' || feature.type == 'relation'  || feature.type == 'polygon'){
             list.push(
                 latLangToLatLang(

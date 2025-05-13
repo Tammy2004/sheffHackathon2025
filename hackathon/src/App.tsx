@@ -8,6 +8,8 @@ import { getFeatures } from "./read-json"
 import { LatLng, type LatLngExpression } from 'leaflet'
 import { useEffect, useState } from 'react'
 import L from "leaflet";
+import 'leaflet/dist/leaflet.css';
+
 
 import hospital from "./assets/images/hospital.png";
 import bookshelf from "./assets/images/bookshelf.png";

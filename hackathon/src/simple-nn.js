@@ -11,11 +11,12 @@ const ALPHA = 0.001
 const HIDDEN_SIZE = 4
 const model = tf.sequential({
     layers: [
-      tf.layers.conv2d({ filters: 2, kernelSize: 2}),
+        tf.layers.dense({ inputShape: [2], units: 10, activation: 'relu' }),
       tf.layers.dense({units: 10, activation: 'relu'}),
       tf.layers.dense({units: 10, activation: 'relu'}),
       tf.layers.dense({units: 10, activation: 'relu'}),
-      tf.layers.conv2d({ filters: 2, kernelSize: 2})
+      tf.layers.dense({ units: 1, activation: 'relu' }), // set units to n (TODO)
+
     ]
    });
 model.summary()
@@ -38,9 +39,4 @@ const train = async () => {
   const lastDayFeatures = tf.tensor([[12.0, 5.0]])
   model.predict(lastDayFeatures).print()
 }
-if (document.readyState !== "loading") {
-  train()
-} else {
-    
-  document.addEventListener("DOMContentLoaded", train)
-}
+train()

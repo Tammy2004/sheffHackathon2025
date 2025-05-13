@@ -38,6 +38,7 @@ export async function getFeatures() {
     )
     
     console.log(hospitals)
+    console.log(flattenOSMData(hospitals.elements))
 
     return {
         libraries: features.map(({geometry}) => coordsToLatLang(geometry.coordinates)),
@@ -46,14 +47,21 @@ export async function getFeatures() {
     }
 }
 
-function flattenOSMData(data: { geometry: { lat: number; lon: number; }[]; type: string; }[]){
+function flattenOSMData(data: { type?: string; bounds: { maxlat: number; minlat: number; maxlon: number; minlon: number; }; lat: number; lon: number; }[]){
     const list: LatLng[] = [];
     
-    data.forEach((feature: { geometry: { lat: number; lon: number; }[]; type: string; }) => {
-        if(feature.type == 'way' || feature.type == 'relation'){
-            feature.geometry.forEach((point: { lat: number; lon: number; }) => {
-                list.push(latLangToLatLang(point))
-            })
+    data.forEach((feature: { type?: string; bounds: {maxlat: number, minlat: number, maxlon: number, minlon: number}; lat: number; lon: number; }) => {
+        if(feature.type == 'way' || feature.type == 'relation'  || feature.type == 'polygon'){
+            list.push(
+                latLangToLatLang(
+                    {
+                        lat: (feature.bounds.maxlat + feature.bounds.minlat)/2, 
+                        lon: (feature.bounds.maxlon + feature.bounds.minlon)/2
+                    }
+                )
+            )
+        } else {
+            list.push(latLangToLatLang(feature))
         }
     });
     

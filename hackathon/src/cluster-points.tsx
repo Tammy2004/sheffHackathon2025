@@ -2,6 +2,8 @@
 import {getFeatures} from "./read-json"
 
 const k = 3;
+const MAX_ITERATIONS = 100;
+
 
 export async function clusterNeighborhoods() 
 {
@@ -192,6 +194,9 @@ function kmeans(dataset, k, useNaiveSharding = false) {
     };
     return results;
   } else {
+    console.log("Dataset:", dataset);
+    console.log("Dataset length:", dataset.length);
+    console.log("First element:", dataset[0]);
     throw new Error('Invalid dataset');
   }
 }

@@ -12,14 +12,14 @@ import L from "leaflet";
 import hospital from "./assets/images/hospital.png";
 import bookshelf from "./assets/images/bookshelf.png";
 import school from "./assets/images/school.png";
-// import gardening from "./assets/images/gardening.png";
+import gardening from "./assets/images/gardening.png";
 
 
 
 
 function App() {
   const tempArray: LatLng[] = [];
-  const [features, setFeatures] = useState({hospitals: tempArray, libraries: tempArray, schools: tempArray});
+  const [features, setFeatures] = useState({hospitals: tempArray, libraries: tempArray, schools: tempArray, gardens: tempArray});
   const hospitalIcon = L.icon ({
     iconUrl : hospital,
     iconSize : [35,35], // size of the icon
@@ -32,12 +32,12 @@ function App() {
     iconAnchor : [22,94], // point of the icon which will correspond to marker's location
     popupAnchor : [-3, -76] // point from which the popup should open relative to the iconAnchor
   })
-  // var gardenIcon = new Icon ({
-  //   iconUrl : 'hackathon\src\assets\images\gardening.png',
-  //   iconSize : [35,35], // size of the icon
-  //   iconAnchor : [22,94], // point of the icon which will correspond to marker's location
-  //   popupAnchor : [-3, -76] // point from which the popup should open relative to the iconAnchor
-  // })
+  const gardenIcon = L.icon ({
+    iconUrl : gardening,
+    iconSize : [35,35], // size of the icon
+    iconAnchor : [22,94], // point of the icon which will correspond to marker's location
+    popupAnchor : [-3, -76] // point from which the popup should open relative to the iconAnchor
+  })
   const schoolIcon = L.icon ({
     iconUrl : school,
     iconSize : [35,35], // size of the icon
@@ -67,12 +67,22 @@ function App() {
       </>
     );
   });
-    const schoolMarkers = features.schools.map((x: LatLngExpression) => {
+  const schoolMarkers = features.schools.map((x: LatLngExpression) => {
     return(
       <>
         <Marker 
           position={x}
           icon={schoolIcon}></Marker>
+      </>
+    );
+  });
+
+  const gardenMarkers = features.gardens.map((x: LatLngExpression) => {
+    return(
+      <>
+        <Marker 
+          position={x}
+          icon={gardenIcon}></Marker>
       </>
     );
   });
@@ -87,6 +97,7 @@ function App() {
       {libraryMarkers}
       {hospitalMarkers}
       {schoolMarkers}
+      {gardenMarkers}
       <div className="button-container">
         <button id="Button">Hospital</button>
         <button id="Button">Schools</button>

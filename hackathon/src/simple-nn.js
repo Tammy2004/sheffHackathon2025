@@ -35,11 +35,12 @@ const train = async () => {
   model.layers[0].getWeights()[0].print()
   console.log(model.layers[1].getWeights()[0].shape)
   model.layers[1].getWeights()[0].print()
-//   const lastDayFeatures = tf.tensor([[12.0, 5.0]])
-//   model.predict(lastDayFeatures).print()
+  const lastDayFeatures = tf.tensor([[12.0, 5.0]])
+  model.predict(lastDayFeatures).print()
 }
 if (document.readyState !== "loading") {
   train()
 } else {
+    
   document.addEventListener("DOMContentLoaded", train)
 }

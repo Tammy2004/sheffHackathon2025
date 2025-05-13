@@ -9,25 +9,15 @@ const DATA = tf.tensor([
 const nextDayInfections = tf.expandDims(tf.tensor([5.0, 7.0, 12.0, 19.0]), 1) //change this (TODO)
 const ALPHA = 0.001
 const HIDDEN_SIZE = 4
-const model = tf.sequential()
-model.add(
-  tf.layers.dense({
-    inputShape: [DATA.shape[1]],
-    units: HIDDEN_SIZE,
-    activation: "tanh",
-  })
-)
-model.add(
-  tf.layers.dense({
-    units: HIDDEN_SIZE,
-    activation: "tanh",
-  })
-)
-model.add(
-  tf.layers.dense({
-    units: 1,
-  })
-)
+const model = tf.sequential({
+    layers: [
+      tf.layers.conv2d({ filters: 2, kernelSize: 2}),
+      tf.layers.dense({units: 10, activation: 'relu'}),
+      tf.layers.dense({units: 10, activation: 'relu'}),
+      tf.layers.dense({units: 10, activation: 'relu'}),
+      tf.layers.conv2d({ filters: 2, kernelSize: 2})
+    ]
+   });
 model.summary()
 const train = async () => {
   model.compile({ optimizer: tf.train.sgd(ALPHA), loss: "meanSquaredError" })

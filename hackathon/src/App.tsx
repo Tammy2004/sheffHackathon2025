@@ -1,6 +1,4 @@
-// import { useState } from 'react'
-// import reactLogo from './assets/react.svg'
-// import viteLogo from '/vite.svg'
+
 import { MapContainer } from 'react-leaflet'
 import { TileLayer } from 'react-leaflet'
 import { Marker } from 'react-leaflet'
@@ -26,7 +24,15 @@ function App() {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       {markers}
+      <div className="button-container">
+        <button id="Button">Hospital</button>
+        <button id="Button">Schools</button>
+        <button id="Button">Libraries</button>
+        <button id="Button">Gardens</button>
+      </div>     
     </MapContainer>
+
+
   </>
   )
 }

@@ -19,7 +19,7 @@ export async function getFeatures() {
         // The body contains the query
         body: "data="+ encodeURIComponent(`
             [out:json]
-            [timeout:90]
+            [timeout:180]
             ;
             area(id:3600106956)->.searchArea
             ;
@@ -44,7 +44,7 @@ export async function getFeatures() {
         // The body contains the query
         body: "data="+ encodeURIComponent(`
             [out:json]
-            [timeout:90]
+            [timeout:180]
             ;
             area(id:3600106956)->.searchArea
             ;
@@ -66,7 +66,7 @@ export async function getFeatures() {
         // The body contains the query
         body: "data="+ encodeURIComponent(`
             [out:json]
-            [timeout:90]
+            [timeout:180]
             ;
             area(id:3600106956)->.searchArea;
 
@@ -91,6 +91,33 @@ export async function getFeatures() {
         "schools": flattenOSMData(schools.elements),
         "gardens": flattenOSMData(gardens.elements),
     }
+}
+
+export async function getNeighborhoods() {
+
+    const neighborhoods = await fetch(
+    "https://overpass-api.de/api/interpreter",
+    {
+        method: "POST",
+        // The body contains the query
+        body: "data="+ encodeURIComponent(`
+            [out:json]
+            [timeout:90]
+            ;
+            area(id:3600106956)->.searchArea
+            ;
+
+            (
+                nwr[place=suburb](area.searchArea);
+            );
+            out geom;
+        `)
+    },
+    ).then(
+        (data)=>data.json()
+    )
+
+    return flattenOSMData(neighborhoods.elements)
 }
 
 type Feature = {

@@ -1,6 +1,5 @@
 import { LatLng } from 'leaflet'
 import { features as libFeatures} from "./local_data/Libraries.json";
-import { features as gardenFeatures} from "./local_data/Historic_Parks_And_Gardens.json";
 
 
 export function coordsToLatLang (coords: number[]): LatLng {
@@ -60,11 +59,37 @@ export async function getFeatures() {
         (data)=>data.json()
     )
 
+    const gardens = await fetch(
+    "https://overpass-api.de/api/interpreter",
+    {
+        method: "POST",
+        // The body contains the query
+        body: "data="+ encodeURIComponent(`
+            [out:json]
+            [timeout:90]
+            ;
+            area(id:3600106956)->.searchArea;
+
+            (
+            nwr["leisure"="park"](if: length() > 100)(area.searchArea);
+            way["natural"="wood"](if: length() > 100)(area.searchArea);
+            );
+            out geom;
+            make stat total_length=sum(length()),section_lengths=set(length());
+            out;
+        `)
+    },
+    ).then(
+        (data)=>data.json()
+    )
+
+    console.log(gardens)
+
     return {
         libraries: libFeatures.map(({geometry}) => coordsToLatLang(geometry.coordinates)),
-        gardens: gardenFeatures.map(({geometry}) => coordsToLatLang(geometry.coordinates)), //TODO
         hospitals: flattenOSMData(hospitals.elements),
         schools: flattenOSMData(schools.elements),
+        gardens: flattenOSMData(gardens.elements),
     }
 }
 
@@ -88,24 +113,11 @@ function flattenOSMData(data: Feature[]){
                     }
                 )
             )
-        } else {
+        } else if (feature.type == 'node')
+        {
             list.push(latLangToLatLang(feature))
         }
     });
     
     return list
 }
-
-
-            // [out:json]
-            // [timeout:90];
-
-            // {{geocodeArea:Sheffield}}->.searchArea;
-
-            // (
-            //     node["amenity"="hospital"](area.searchArea);
-            //     node["healthcare"="hospital"](area.searchArea);
-            //     nwr["healthcare"="doctor"](area.searchArea);
-            //     node["building"="hospital"](area.searchArea);
-            // );
-            // out geom;

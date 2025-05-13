@@ -1,4 +1,4 @@
-
+// @ts-nocheck 
 import { MapContainer } from 'react-leaflet'
 import { TileLayer } from 'react-leaflet'
 import { Marker } from 'react-leaflet'
@@ -7,6 +7,8 @@ import './App.css'
 import { getFeatures } from "./read-json"
 import { LatLng, type LatLngExpression } from 'leaflet'
 import { useEffect, useState } from 'react'
+import { clusterNeighborhoods } from './cluster-points'
+
 import L from "leaflet";
 import 'leaflet/dist/leaflet.css';
 
@@ -16,12 +18,9 @@ import bookshelf from "./assets/images/bookshelf.png";
 import school from "./assets/images/school.png";
 import gardening from "./assets/images/gardening.png";
 
-
-
-
 function App() {
   const tempArray: LatLng[] = [];
-  const [features, setFeatures] = useState({hospitals: tempArray, libraries: tempArray, schools: tempArray, gardens: tempArray});
+  const [features, setFeatures] = useState({0: {points: []}, 1: {points: []}, 2: {points: []}});
   const hospitalIcon = L.icon ({
     iconUrl : hospital,
     iconSize : [35,35], // size of the icon
@@ -48,10 +47,10 @@ function App() {
   })
 
   useEffect(() => {
-    getFeatures().then(features => setFeatures(features));
+    clusterNeighborhoods().then((features) => setFeatures(features))
   }, []);
 
-  const hospitalMarkers = features.hospitals.map((x: LatLngExpression) => {
+  const hospitalMarkers = features[0].points.map((x: LatLngExpression) => {
     return(
       <>
         <Marker 
@@ -60,7 +59,7 @@ function App() {
       </>
     );
   });
-  const libraryMarkers = features.libraries.map((x: LatLngExpression) => {
+  const libraryMarkers = features[1].points.map((x: LatLngExpression) => {
     return(
       <>
         <Marker 
@@ -69,7 +68,7 @@ function App() {
       </>
     );
   });
-  const schoolMarkers = features.schools.map((x: LatLngExpression) => {
+  const schoolMarkers = features[2].points.map((x: LatLngExpression) => {
     return(
       <>
         <Marker 
@@ -79,15 +78,15 @@ function App() {
     );
   });
 
-  const gardenMarkers = features.gardens.map((x: LatLngExpression) => {
-    return(
-      <>
-        <Marker 
-          position={x}
-          icon={gardenIcon}></Marker>
-      </>
-    );
-  });
+  // const gardenMarkers = features.gardens.map((x: LatLngExpression) => {
+  //   return(
+  //     <>
+  //       <Marker 
+  //         position={x}
+  //         icon={gardenIcon}></Marker>
+  //     </>
+  //   );
+  // });
 
   return (
   <>
@@ -99,7 +98,7 @@ function App() {
       {libraryMarkers}
       {hospitalMarkers}
       {schoolMarkers}
-      {gardenMarkers}
+      {/* {gardenMarkers} */}
       <div className="button-container">
         <button id="Button">Hospital</button>
         <button id="Button">Schools</button>

@@ -86,10 +86,10 @@ export async function getFeatures() {
     console.log(gardens)
 
     return {
-        libraries: libFeatures.map(({geometry}) => coordsToLatLang(geometry.coordinates)),
-        hospitals: flattenOSMData(hospitals.elements),
-        schools: flattenOSMData(schools.elements),
-        gardens: flattenOSMData(gardens.elements),
+        "libraries": libFeatures.map(({geometry}) => coordsToLatLang(geometry.coordinates)),
+        "hospitals": flattenOSMData(hospitals.elements),
+        "schools": flattenOSMData(schools.elements),
+        "gardens": flattenOSMData(gardens.elements),
     }
 }
 

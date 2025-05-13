@@ -37,13 +37,32 @@ export async function getFeatures() {
         (data)=>data.json()
     )
     
-    console.log(hospitals)
-    console.log(flattenOSMData(hospitals.elements))
+    const schools = await fetch(
+    "https://overpass-api.de/api/interpreter",
+    {
+        method: "POST",
+        // The body contains the query
+        body: "data="+ encodeURIComponent(`
+            [out:json]
+            [timeout:90]
+            ;
+            area(id:3600106956)->.searchArea
+            ;
+
+            (
+                way["amenity"="school"](area.searchArea);
+            );
+            out geom;
+        `)
+    },
+    ).then(
+        (data)=>data.json()
+    )
 
     return {
         libraries: features.map(({geometry}) => coordsToLatLang(geometry.coordinates)),
-        hospitals: flattenOSMData(hospitals.elements)
-            
+        hospitals: flattenOSMData(hospitals.elements),
+        schools: flattenOSMData(schools.elements),
     }
 }
 

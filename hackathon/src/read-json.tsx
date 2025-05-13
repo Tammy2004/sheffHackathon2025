@@ -1,5 +1,6 @@
 import { LatLng } from 'leaflet'
-import { features } from "./local_data/Libraries.json";
+import { features as libFeatures} from "./local_data/Libraries.json";
+import { features as gardenFeatures} from "./local_data/Historic_Parks_And_Gardens.json";
 
 
 export function coordsToLatLang (coords: number[]): LatLng {
@@ -41,7 +42,8 @@ export async function getFeatures() {
     console.log(flattenOSMData(hospitals.elements))
 
     return {
-        libraries: features.map(({geometry}) => coordsToLatLang(geometry.coordinates)),
+        libraries: libFeatures.map(({geometry}) => coordsToLatLang(geometry.coordinates)),
+        gardens: gardenFeatures.map(({geometry}) => coordsToLatLang(geometry.coordinates)), //TODO
         hospitals: flattenOSMData(hospitals.elements)
             
     }

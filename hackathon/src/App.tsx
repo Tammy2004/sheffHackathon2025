@@ -67,6 +67,16 @@ function App() {
       </>
     );
   });
+  const parkMarkers = features.libraries.map((x: LatLngExpression) => {
+    return(
+      <>
+        <Marker 
+          position={x}
+          icon={libraryIcon}></Marker>
+      </>
+    );
+  });
+
 
   return (
   <>

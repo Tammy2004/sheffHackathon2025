@@ -114,16 +114,21 @@ function App() {
   //   );
   // });
 
-  const displayMarker = () => {
-
+  const scoresToHeatmap = (scores) => {
+    return scores.map(score =>{
+      return [score.point.lat, score.point.lng, 1-score.score]
+    })
   };
+
+
 
 const handleMapCreated = (map: Map | null) => {
   if (map) {
     console.log("Map loaded!")
-    getNNHeatmap().then(x => {
+    scoreNeighborhoods().then(x => {
       console.log("Appending heatmap")
-      L.heatLayer(x, {radius: 25, minOpacity: 0.5}).addTo(map);
+      L.heatLayer(scoresToHeatmap(x), {radius: 100}).addTo(map);
+      setNeighborhoods(x)
     });
   }
 };

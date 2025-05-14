@@ -10,7 +10,9 @@ const model = tf.sequential({
     layers: [
         tf.layers.dense({ inputShape: [2], units: 10, activation: 'relu' }),
       tf.layers.dense({units: 10, activation: 'relu'}),
-      tf.layers.dense({units: 10, activation: 'relu'}),
+      tf.layers.dense({units: 40, activation: 'relu'}),
+      tf.layers.dense({units: 40, activation: 'relu'}),
+      tf.layers.dense({units: 40, activation: 'relu'}),
       tf.layers.dense({units: 10, activation: 'relu'}),
       tf.layers.dense({ units: 1, activation: 'relu' }), // set units to n (TODO)
 
@@ -39,6 +41,8 @@ export const train = async () => {
       },
     },
   })
+
+  return model;
 }
 
 const WIDTH = 0.1
@@ -48,18 +52,30 @@ const CENTRE = [-1.4717,53.3786]
 
 export async function getNNHeatmap(){
   console.log("Training...")
-  await train()
+  const mod = await train()
   let heatmap = []
-
+  console.log("Calculating points...")
   const left = CENTRE[0]-(WIDTH/2);
   for (let x = left; x < left + WIDTH; x +=(WIDTH/DENSITY)) {
     const bottom = CENTRE[1]-(HEIGHT/2);
     for (let y = bottom; y < bottom + HEIGHT; y+=(HEIGHT/DENSITY)) {
-      const val = model.predict(tf.tensor([[x, y]])).dataSync()[0]
-      console.log(val)
+      const val = mod.predict(tf.tensor([[y, x]])).dataSync()[0]
       heatmap.push([y,x,val])
     }
   }
-  console.log(heatmap)
-  return heatmap
+
+    let minScore = 1;
+    let maxScore = 0;
+    heatmap.forEach(x => {
+        minScore = Math.min(minScore,x[2])
+        maxScore = Math.max(maxScore,x[2])
+    })
+
+    const normalHeatmap = heatmap.map(x => {
+        x[2] = (x[2] - minScore)/(maxScore - minScore)
+        return x
+    }) 
+
+    console.log(normalHeatmap)
+    return normalHeatmap
 }

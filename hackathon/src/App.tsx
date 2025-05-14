@@ -84,7 +84,7 @@ function App() {
           color={scoreToColour(x.score)}
           center={x.point}>
           <Popup>
-           {`Score: ${x.score.toFixed(2)}`}
+           {`Score: ${x.score}`}
         </Popup>
         </CircleMarker>
       </>

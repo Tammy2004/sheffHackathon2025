@@ -42,23 +42,41 @@ function getDistance(a,b){
 }
 
 function scoreNeighborhood(neighborhood, features){
-    let minDistances = {}
+    let distances = {}
+    const maxDist = 0.0001;
 
     features.forEach(feature => {
-        const dist = getDistance(neighborhood,feature)
-        if(minDistances[feature.feature] == undefined || minDistances[feature.feature] > dist){
-            minDistances[feature.feature] = dist
+        const dist = getDistance(neighborhood, feature);
+        if (dist <= maxDist) { // Only consider distances within maxDist
+            if (!distances[feature.feature]) {
+                distances[feature.feature] = [];
+            }
+            distances[feature.feature].push(dist);
         }
     });
 
     let score = 0;
-    
-    const keys = Object.keys(minDistances);
+
+    const keys = Object.keys(distances);
 
     keys.forEach(key => {
-        score += minDistances[key]
+        if (distances[key].length > 0) { // Ensure there are distances to calculate
+            const avgDistance = distances[key].reduce((acc, val) => acc + val, 0) / distances[key].length;
+            score += avgDistance;
+        }
     });
 
     return score;
+
+
+    // let score = 0;
+    
+    // const keys = Object.keys(minDistances);
+
+    // keys.forEach(key => {
+    //     score += minDistances[key]
+    // });
+
+    // return score;
 }
 

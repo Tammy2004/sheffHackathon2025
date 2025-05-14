@@ -78,6 +78,9 @@ function App() {
           radius='10'
           color={scoreToColour(x.score)}
           center={x.point}>
+          <Popup>
+           {`Score: ${x.score}`}
+        </Popup>
         </CircleMarker>
       </>
     );

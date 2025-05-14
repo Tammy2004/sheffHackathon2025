@@ -3,9 +3,12 @@ import { getFeatures, getNeighborhoods } from "./read-json"
 
 export async function scoreNeighborhoods() 
 {
+    console.log("Calling overpass api...")
+
     const features = await getFeatures()
     const keys = Object.keys(features);
     
+    console.log("Scoring Neighborhoods")
     const neighborhoods = await getNeighborhoods();
 
     const points = keys.flatMap(key => {

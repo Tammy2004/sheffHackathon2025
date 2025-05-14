@@ -8,10 +8,11 @@ import { LatLng, type LatLngExpression } from 'leaflet'
 import { Suspense, useEffect, useState } from 'react'
 import { scoreNeighborhoods } from './score-points'
 
-import L from "leaflet";
+import L from "leaflet";  
 import 'leaflet/dist/leaflet.css';
+import "leaflet.heat"
 
-
+import { getNNHeatmap } from "./simple-nn"
 import hospital from "./assets/images/hospital.png";
 import bookshelf from "./assets/images/bookshelf.png";
 import school from "./assets/images/school.png";
@@ -70,12 +71,6 @@ function App() {
     popupAnchor : [-3, -76] // point from which the popup should open relative to the iconAnchor
   })
 
-  useEffect(() => {
-    getFeatures().then(setFeatures)
-    scoreNeighborhoods().then(setNeighborhoods)
-  }, []);
-
-
   const neighborhoodMarkers = neighborhoods.map((x: LatLngExpression) => {
     return(
       <>
@@ -119,9 +114,21 @@ function App() {
   const displayMarker = () => {
 
   };
+
+const handleMapCreated = (map: Map | null) => {
+  if (map) {
+    console.log("Map loaded!")
+    getNNHeatmap().then(x => {
+      console.log("Appending heatmap")
+      L.heatLayer(x, {radius: 25, minOpacity: 0.5}).addTo(map);
+    });
+  }
+};
+
   return (
   <>
-    <MapContainer center={[53.3786, -1.4717]} zoom={13} scrollWheelZoom={true} id="map">
+    <MapContainer center={[53.3786, -1.4717]} zoom={13} scrollWheelZoom={true} id="map" ref={handleMapCreated}> 
+    
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

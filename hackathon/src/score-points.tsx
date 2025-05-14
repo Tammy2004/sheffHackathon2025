@@ -1,11 +1,10 @@
 // @ts-nocheck 
 import { getFeatures, getNeighborhoods } from "./read-json"
 
-export async function scoreNeighborhoods() 
+export async function scoreNeighborhoods(features) 
 {
     console.log("Calling overpass api...")
 
-    const features = await getFeatures()
     const keys = Object.keys(features);
     
     console.log("Scoring Neighborhoods")

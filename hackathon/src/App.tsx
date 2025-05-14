@@ -43,8 +43,63 @@ function scoreToColour(score: number){
 
 function App() {
   const tempArray: LatLng[] = [];
-  const [features, setFeatures] = useState({0: {points: []}, 1: {points: []}, 2: {points: []}});
+  const [hospitalMarkers, setHospitalMarkers] = useState([]);
+  const [libraryMarkers, setLibraryMarkers] = useState([]);
+  const [schoolMarkers, setSchoolMarkers] = useState([]);
+  const [gardenMarkers, setGardenMarkers] = useState([]);
+
   const [neighborhoods, setNeighborhoods] = useState([{point: {lat: 0, lng: 0}, score: 0}]);
+
+  useEffect(() =>{
+    console.log("Map loaded!")
+    getFeatures().then(features => {
+        setLibraryMarkers(features.libraries.map((x: LatLngExpression) => {
+          return(
+            <>
+              <Marker 
+                position={x}
+                icon={libraryIcon}></Marker>
+            </>
+          );
+        }))
+        setSchoolMarkers(features.schools.map((x: LatLngExpression) => {
+          return(
+            <>
+              <Marker 
+                position={x}
+                icon={schoolIcon}></Marker>
+            </>
+          );
+        }))
+
+        setHospitalMarkers(features.hospitals.map((x: LatLngExpression) => {
+          return(
+            <>
+              <Marker 
+                position={x}
+                icon={hospitalIcon}></Marker>
+            </>
+          );
+        }))
+
+        setGardenMarkers(features.gardens.map((x: LatLngExpression) => {
+          return(
+            <>
+              <Marker 
+                position={x}
+                icon={gardenIcon}></Marker>
+            </>
+          );
+        }))
+
+
+
+      scoreNeighborhoods(features).then(x => {
+        console.log("Appending heatmap")
+        setNeighborhoods(x)
+      });
+    });
+  })
 
   const hospitalIcon = L.icon ({
     iconUrl : hospital,
@@ -71,65 +126,26 @@ function App() {
     popupAnchor : [-3, -76] // point from which the popup should open relative to the iconAnchor
   })
 
-  const neighborhoodMarkers = neighborhoods.map((x: LatLngExpression) => {
-    return(
-      <>
-        <CircleMarker 
-          radius='10'
-          color={scoreToColour(x.score)}
-          center={x.point}>
-          <Popup>
-           {`Score: ${x.score}`}
-        </Popup>
-        </CircleMarker>
-      </>
-    );
-  });
-  // const libraryMarkers = features.libraries.map((x: LatLngExpression) => {
-  //   return(
-  //     <>
-  //       <Marker 
-  //         position={x}
-  //         icon={libraryIcon}></Marker>
-  //     </>
-  //   );
-  // });
-  // const schoolMarkers = features.schools.map((x: LatLngExpression) => {
-  //   return(
-  //     <>
-  //       <Marker 
-  //         position={x}
-  //         icon={schoolIcon}></Marker>
-  //     </>
-  //   );
-  // });
-
-  // const gardenMarkers = features.gardens.map((x: LatLngExpression) => {
-  //   return(
-  //     <>
-  //       <Marker 
-  //         position={x}
-  //         icon={gardenIcon}></Marker>
-  //     </>
-  //   );
-  // });
-
-  const scoresToHeatmap = (scores) => {
-    return scores.map(score =>{
-      return [score.point.lat, score.point.lng, 1-score.score]
-    })
-  };
 
 
+      const neighborhoodMarkers = neighborhoods.map((x: LatLngExpression) => {
+          return(
+            <>
+              <CircleMarker 
+                radius='10'
+                color={scoreToColour(x.score)}
+                center={x.point}>
+                <Popup>
+                {`Score: ${x.score}`}
+              </Popup>
+              </CircleMarker>
+            </>
+          );
+        });
 
 const handleMapCreated = (map: Map | null) => {
   if (map) {
-    console.log("Map loaded!")
-    scoreNeighborhoods().then(x => {
-      console.log("Appending heatmap")
-      L.heatLayer(scoresToHeatmap(x), {radius: 100}).addTo(map);
-      setNeighborhoods(x)
-    });
+    
   }
 };
 
@@ -141,7 +157,7 @@ const handleMapCreated = (map: Map | null) => {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {/* <LayersControl position="topright">
+      <LayersControl position="topright">
       <LayersControl.Overlay checked name="Hospitals">
         <LayerGroup>
           {hospitalMarkers}
@@ -162,11 +178,13 @@ const handleMapCreated = (map: Map | null) => {
           {schoolMarkers}
         </LayerGroup>
       </LayersControl.Overlay>
-    </LayersControl>
- */}
-    <Suspense>
+      <LayersControl.Overlay checked name="Neighborhoods">
+        <LayerGroup>
       {neighborhoodMarkers}
-    </Suspense>
+          
+        </LayerGroup>
+      </LayersControl.Overlay>
+    </LayersControl>
     </MapContainer>
 
 
